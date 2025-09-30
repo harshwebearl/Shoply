@@ -31,4 +31,11 @@ router.post('/forgot-password', [
     check('email').isEmail()
 ], authController.forgotPassword);
 
+// Password reset route
+router.post('/reset-password', [
+    check('email').isEmail(),
+    check('oldPassword').notEmpty(),
+    check('newPassword').isLength({ min: 6 })
+], authController.resetPassword);
+
 module.exports = router;

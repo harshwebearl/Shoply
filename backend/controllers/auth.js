@@ -1,3 +1,34 @@
+// Reset password using token
+exports.resetPassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !oldPassword || !newPassword) {
+      return res.status(400).json({ error: 'All fields are required.' });
+    }
+    const token = authHeader.replace('Bearer ', '');
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({ error: 'Invalid or expired token.' });
+    }
+    const user = await User.findById(payload.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Old password is incorrect.' });
+    }
+    user.password = newPassword;
+    await user.save();
+    res.json({ message: 'Password updated successfully.' });
+  } catch (err) {
+    console.error('Reset password error:', err);
+    res.status(500).json({ error: 'Failed to reset password.' });
+  }
+};
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
