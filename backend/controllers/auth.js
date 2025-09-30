@@ -5,9 +5,9 @@ const bcrypt = require('bcryptjs');
 // Register a new user
 exports.register = async (req, res) => {
   try {
-    const { fullname, email, password, mobile, country, state, city } = req.body;
+    const { name, email, password, mobile, gender } = req.body;
     // Validate input
-    if (!fullname || !email || !password || !mobile || !country || !state || !city) {
+    if (!name || !email || !password || !mobile || !gender) {
       return res.status(400).json({ error: 'All fields are required.' });
     }
     // Check if user already exists
@@ -15,24 +15,13 @@ exports.register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ error: 'Email already in use.' });
     }
-    // Handle photo upload
-    let photoFilename = '';
-    if (req.file) {
-      photoFilename = req.file.filename;
-    } else {
-      // Set default photo if not uploaded
-      photoFilename = 'default.png';
-    }
     // Create and save the new user
     const user = new User({
-      fullname,
+      name,
       email,
       password,
       mobile,
-      country,
-      state,
-      city,
-      photo: photoFilename
+      gender
     });
     await user.save();
     // Generate JWT token

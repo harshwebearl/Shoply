@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
+const cors = require('cors');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -15,6 +16,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/userdb';
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 // Middleware
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
