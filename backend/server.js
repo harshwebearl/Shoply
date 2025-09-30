@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
+const categoryRoutes = require('./routes/category');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/category', categoryRoutes);
 
 // Swagger setup
 const swaggerOptions = {
