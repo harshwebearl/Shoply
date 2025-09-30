@@ -7,6 +7,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const categoryRoutes = require('./routes/category');
+const cartRoutes = require('./routes/cart');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
@@ -31,6 +32,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/product', require('./routes/product'));
+app.use('/api/cart', cartRoutes);
 
 // Swagger setup
 const swaggerOptions = {
