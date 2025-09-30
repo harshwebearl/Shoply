@@ -1,10 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
-require('dotenv').config();
-
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const categoryRoutes = require('./routes/category');
@@ -31,6 +30,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/category', categoryRoutes);
+app.use('/api/product', require('./routes/product'));
 
 // Swagger setup
 const swaggerOptions = {

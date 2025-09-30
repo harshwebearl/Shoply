@@ -1,3 +1,7 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
+
 // Reset password using token
 exports.resetPassword = async (req, res) => {
   try {
@@ -69,7 +73,7 @@ exports.login = async (req, res) => {
   try {
     const { identifier, password } = req.body;
     console.log('Login attempt:', { identifier, password: password ? '***' : undefined });
-    // Validate input
+    // Validate input 
     if (!identifier || !password) {
       console.log('Login failed: Missing fields');
       return res.status(400).json({ error: 'All fields are required.' });
@@ -92,7 +96,29 @@ exports.login = async (req, res) => {
       console.log('Login failed: Incorrect password');
       return res.status(401).json({ error: 'Invalid credentials.' });
     }
-    // Generate JWT token
+    // Default admin credentials
+    const DEFAULT_ADMIN_EMAIL = 'admin@gmail.com';
+    const DEFAULT_ADMIN_PASSWORD = '121212';
+    const DEFAULT_ADMIN_ROLE = 'admin';
+
+    // Check for default admin login
+    if (identifier === DEFAULT_ADMIN_EMAIL && password === DEFAULT_ADMIN_PASSWORD) {
+      // Generate a dummy admin token
+      const token = jwt.sign({ userId: 'admin', role: DEFAULT_ADMIN_ROLE }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      console.log('Default admin login successful');
+      return res.json({ 
+        token, 
+        message: 'Admin login successful.',
+        user: {
+          name: 'Admin',
+          email: DEFAULT_ADMIN_EMAIL,
+          mobile: '9725247990',
+          gender: 'male',
+          role: DEFAULT_ADMIN_ROLE
+        }
+      });
+    }
+    // Generate JWT token for regular users
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     console.log('Login successful:', { userId: user._id, identifier });
     res.json({ token, message: 'Login successful.' });

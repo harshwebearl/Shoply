@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const profileController = require('../controllers/profile');
-const { authenticate } = require('../middleware/auth');
+const { isAuthenticated } = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -35,9 +35,9 @@ router.get('/photo/:filename', (req, res) => {
 });
 
 // View profile
-router.get('/', authenticate, profileController.viewProfile);
+router.get('/', isAuthenticated, profileController.viewProfile);
 
 // Update profile (with optional photo upload)
-router.put('/', upload.single('photo'), authenticate, profileController.updateProfile);
+router.put('/', upload.single('photo'), isAuthenticated, profileController.updateProfile);
 
 module.exports = router;
