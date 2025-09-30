@@ -8,6 +8,8 @@ const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const categoryRoutes = require('./routes/category');
 const cartRoutes = require('./routes/cart');
+const customerRoutes = require('./routes/customer');
+const orderRoutes = require('./routes/order');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
@@ -33,6 +35,8 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/product', require('./routes/product'));
 app.use('/api/cart', cartRoutes);
+app.use('/api/customer', customerRoutes);
+app.use('/api/order', orderRoutes);
 
 // Swagger setup
 const swaggerOptions = {
