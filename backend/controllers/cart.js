@@ -122,9 +122,24 @@ exports.deleteCartItem = async (req, res) => {
 // Delete entire cart (userId from token)
 exports.deleteCart = async (req, res) => {
   try {
-    const userId = req.user.id;
-    await Cart.findOneAndDelete({ user: userId });
-    res.json({ message: 'Cart deleted' });
+    const userId = req.user.userId;
+    if (req.body && req.body.productId) {
+      // Delete product from cart
+      const productId = req.body.productId;
+      const colour = req.body.colour;
+      const size = req.body.size;
+      const cart = await Cart.findOne({ user: userId });
+      if (!cart) return res.status(404).json({ message: 'Cart not found' });
+      const itemIndex = cart.items.findIndex(i => i.productId.toString() === productId && i.colour === colour && i.size === size);
+      if (itemIndex === -1) return res.status(404).json({ message: 'Product not found in cart' });
+      cart.items.splice(itemIndex, 1);
+      await cart.save();
+      return res.json({ message: 'Product removed from cart' });
+    } else {
+      // Delete entire cart
+      await Cart.findOneAndDelete({ user: userId });
+      return res.json({ message: 'Cart deleted' });
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
