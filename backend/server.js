@@ -40,20 +40,20 @@ app.use('/api/order', orderRoutes);
 
 // Swagger setup
 const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'User API',
-      version: '1.0.0',
-      description: 'API documentation for User Registration and Profile Management'
-    },
-    servers: [
-      {
-        url: 'http://localhost:5001', // Change port if needed
-      },
-    ],
-  },
-  apis: ['./routes/*.js'], // Path to the API docs (JSDoc comments in your route files)
+	definition: {
+		openapi: '3.0.0',
+		info: {
+			title: 'User API',
+			version: '1.0.0',
+			description: 'API documentation for User Registration and Profile Management'
+		},
+		servers: [
+			{
+				url: 'http://localhost:5001', // Change port if needed
+			},
+		],
+	},
+	apis: ['./routes/*.js'], // Path to the API docs (JSDoc comments in your route files)
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -61,23 +61,22 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Connect to MongoDB and start server
-// Make sure MongoDB is running locally, or set MONGO_URI to a MongoDB Atlas connection string in your .env file
 mongoose.connect(MONGO_URI)
-  .then(() => {
-    console.log('MongoDB connected');
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      console.log(`Frontend: http://localhost:${PORT}/`);
-      console.log(`API Docs: http://localhost:${PORT}/api-docs`);
-      console.log('--- API Endpoints ---');
-      console.log(`Register: POST ${BASE_URL}/api/auth/register`);
-      console.log(`Login:    POST ${BASE_URL}/api/auth/login`);
-      console.log(`Profile View:  GET ${BASE_URL}/api/profile`);
-      console.log(`Profile Edit:  PUT ${BASE_URL}/api/profile`);
-      console.log('---------------------');
-    });
-  })
-  .catch(err => {
-    console.error('MongoDB connection error:', err);
-    console.error('Make sure MongoDB is running locally, or set MONGO_URI to a valid Atlas connection string.');
-  });
+	.then(() => {
+		console.log('MongoDB connected');
+		app.listen(PORT, () => {
+			console.log(`Server running on port ${PORT}`);
+			console.log(`Frontend: http://localhost:${PORT}/`);
+			console.log(`API Docs: http://localhost:${PORT}/api-docs`);
+			console.log('--- API Endpoints ---');
+			console.log(`Register: POST ${BASE_URL}/api/auth/register`);
+			console.log(`Login:    POST ${BASE_URL}/api/auth/login`);
+			console.log(`Profile View:  GET ${BASE_URL}/api/profile`);
+			console.log(`Profile Edit:  PUT ${BASE_URL}/api/profile`);
+			console.log('---------------------');
+		});
+	})
+	.catch(err => {
+		console.error('MongoDB connection error:', err);
+		console.error('Make sure MongoDB is running locally, or set MONGO_URI to a valid Atlas connection string.');
+	});
