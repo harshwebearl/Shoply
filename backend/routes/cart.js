@@ -6,6 +6,9 @@ const { isAuthenticated } = require('../middleware/auth');
 // Apply authentication middleware to all cart routes
 router.use(isAuthenticated);
 
+// Increment or decrement cart item quantity
+router.put('/item/quantity', cartController.updateCartItemQuantity);
+
 // Get cart item by productId, colour, and size
 router.get('/:userId/item/:productId', cartController.getCartItem);
 

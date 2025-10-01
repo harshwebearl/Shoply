@@ -1,3 +1,36 @@
+// Increment or decrement cart item quantity by productId, colour, and size (userId from token)
+exports.updateCartItemQuantity = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { productId, colour, size, action } = req.body;
+    if (!productId || !colour || !size || !action) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) return res.status(404).json({ message: 'Cart not found' });
+    const item = cart.items.find(i => i.productId.toString() === productId && i.colour === colour && i.size === size);
+    if (!item) return res.status(404).json({ message: 'Product not found in cart' });
+    if (action === 'increment') {
+      item.quantity = (item.quantity || 1) + 1;
+    } else if (action === 'decrement') {
+      item.quantity = (item.quantity || 1) - 1;
+      if (item.quantity < 1) {
+        // Optionally remove item if quantity goes below 1
+        cart.items = cart.items.filter(i => !(i.productId.toString() === productId && i.colour === colour && i.size === size));
+      }
+    } else {
+      return res.status(400).json({ message: 'Invalid action' });
+    }
+    // Update total price for the item if price exists
+    if (item.price && item.quantity && item.quantity > 0) {
+      item.total = item.price * item.quantity;
+    }
+    await cart.save();
+    res.json(cart);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 // Get cart item by productId, colour, and size (userId from token)
 exports.getCartItem = async (req, res) => {
   try {
