@@ -21,10 +21,12 @@ exports.updateCartItemQuantity = async (req, res) => {
     } else {
       return res.status(400).json({ message: 'Invalid action' });
     }
-    // Update total price for the item if price exists
-    if (item.price && item.quantity && item.quantity > 0) {
-      item.total = item.price * item.quantity;
-    }
+    // After any quantity change, update totalPrice for all items in the cart
+    cart.items.forEach(i => {
+      if (i.price && i.quantity && i.quantity > 0) {
+        i.totalPrice = i.price * i.quantity;
+      }
+    });
     await cart.save();
     res.json(cart);
   } catch (err) {
@@ -93,15 +95,19 @@ const Cart = require('../models/Cart');
 exports.createOrUpdateCart = async (req, res) => {
   try {
   const userId = req.user.userId;
-    const item = req.body.item;
-    let cart = await Cart.findOne({ user: userId });
-    if (!cart) {
-      cart = new Cart({ user: userId, items: [item] });
-    } else {
-      cart.items.push(item);
-    }
-    await cart.save();
-    res.status(201).json(cart);
+  let item = req.body.item;
+  // Calculate totalPrice = price * quantity
+  if (item && item.price && item.quantity) {
+    item.totalPrice = item.price * item.quantity;
+  }
+  let cart = await Cart.findOne({ user: userId });
+  if (!cart) {
+    cart = new Cart({ user: userId, items: [item] });
+  } else {
+    cart.items.push(item);
+  }
+  await cart.save();
+  res.status(201).json(cart);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
